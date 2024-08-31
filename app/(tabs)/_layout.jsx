@@ -35,6 +35,16 @@ const TabsLayout = () => {
                         headerShown: false,
                     }}
                 />
+                <Tabs.Screen
+                    name="createGroup"
+                    options={{
+                        title: 'Create new group',
+                        headerShown: true,
+                        href: null,
+
+                    }}
+
+                />
             </Tabs>
         </>
     );
