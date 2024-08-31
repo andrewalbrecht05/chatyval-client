@@ -6,6 +6,7 @@ import CustomButton from "../../components/CustomButton";
 import {Link, router} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useAppStore} from "../../store/store";
+import {handleSignUp} from "../../lib/fetch";
 
 const SignUp = () => {
     const updateIsLoggedIn = useAppStore((state) => state.updateIsLoggedIn);
@@ -14,32 +15,6 @@ const SignUp = () => {
         email: "",
         password: "",
     })
-    const handleSignUp = async () => {
-        const newUser = {
-            username: form.username,
-            email: form.email,
-            password: form.password,
-        };
-        console.log("Here", newUser);
-        const response = await fetch("http://10.0.2.2:8080/api/register", {
-            method: "POST",
-            body: JSON.stringify(newUser),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        const data = await response.json();
-
-        console.log(response);
-        console.log(data);
-
-        if( data.token ) {
-            await AsyncStorage.setItem("token", data.token);
-            updateIsLoggedIn(true);
-            router.push("/home");
-        }
-    }
     return (
         <View className="w-full h-full p-10 bg-white justify-evenly">
             <View className="items-center gap-3 p-10">
@@ -54,6 +29,7 @@ const SignUp = () => {
                     handleChangeText={(x) => setForm({...form, email: x})}
                     extraStyles="mb-5"
                 />
+
                 <CustomInput
                     title="Your username"
                     isSecured={false}
@@ -73,7 +49,7 @@ const SignUp = () => {
             <View className="gap-4">
                 <CustomButton
                     title="Create an account"
-                    handlePress={handleSignUp}
+                    handlePress={() => {handleSignUp(form,updateIsLoggedIn)}}
                 />
                 <Link
                     href="sign-in"

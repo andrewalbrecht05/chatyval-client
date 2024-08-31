@@ -4,8 +4,8 @@ import {Button, Image, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useAppStore, useUserStore} from "../../store/store";
-import {router} from "expo-router";
 import CustomInput from "../../components/CustomInput";
+import {handleLogout} from "../../lib/fetch";
 
 
 const Settings = () => {
@@ -15,11 +15,6 @@ const Settings = () => {
     const fullName = useUserStore((state) => state.fullName);
     const updateIsLoggedIn = useAppStore((state) => state.updateIsLoggedIn);
 
-    const handleLogout = async () => {
-        await AsyncStorage.removeItem('token');
-        updateIsLoggedIn(false);
-        router.push('/');
-    }
     return (
         <SafeAreaView className="px-5">
             <Text className="text-center font-bold">Settings</Text>
@@ -50,7 +45,7 @@ const Settings = () => {
                 extraStyles="mb-5"
             />
             <Button
-                onPress={handleLogout}
+                onPress={() => {handleLogout(updateIsLoggedIn)}}
                 title="Logout"
                 className="mt-10"
             />

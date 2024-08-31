@@ -6,6 +6,7 @@ import CustomButton from "../../components/CustomButton";
 import {Link, router} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useAppStore} from "../../store/store";
+import {handleSignIn} from "../../lib/fetch";
 
 const SignIn = () => {
     const [form, setForm] = useState({
@@ -13,29 +14,7 @@ const SignIn = () => {
         password: "",
     });
     const updateIsLoggedIn = useAppStore((state) => state.updateIsLoggedIn);
-    const handleSignIn = async () => {
-        const user = {
-            username: form.username,
-            password: form.password,
-        };
-        const response = await fetch("http://10.0.2.2:8080/api/login", {
-            method: "POST",
-            body: JSON.stringify(user),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        const data = await response.json();
 
-        console.log(response);
-        console.log(data);
-
-        if( response.ok ) {
-            await AsyncStorage.setItem("token", data.token);
-            updateIsLoggedIn(true);
-            router.push("/home");
-        }
-    }
     return (
         <View className="w-full h-full p-10 bg-white justify-evenly">
             <View className="items-center gap-3 p-10">
@@ -62,7 +41,7 @@ const SignIn = () => {
             <View className="gap-4">
                 <CustomButton
                     title="Log in"
-                    handlePress={handleSignIn}
+                    handlePress={() => {handleSignIn(form,updateIsLoggedIn)}}
                 />
                 <Link
                     href="sign-up"

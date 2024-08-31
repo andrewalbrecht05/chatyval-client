@@ -4,35 +4,24 @@ import {Text, View} from 'react-native';
 import {Link, Redirect} from "expo-router";
 import {useAppStore, useUserStore} from "../store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useFetch from "../lib/useFetch";
+import {getUser} from "../lib/fetch";
 
 const App = () => {
     const {isLoggedIn, updateIsLoggedIn} = useAppStore();
     const updateUsername = useUserStore((state) => state.updateUsername);
     const updateEmail = useUserStore((state) => state.updateEmail);
+
     useEffect(() => {
-        const getUser = async () => {
-            const token = await AsyncStorage.getItem('token');
-            if (!token) return false;
-
-            try {
-                const response = await fetch('http://10.0.2.2:8080/user/me', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
+        const data = getUser()
+            .then((data) => {
                 updateUsername(data.username);
                 updateEmail(data.email);
-                updateIsLoggedIn(response.ok);
-            } catch (error) {
-                console.error('An error occurred while checking authentication:', error);
-                throw error;
-            }
-        };
-        getUser().then();
+                updateIsLoggedIn(true);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }, [isLoggedIn]);
 
     if(isLoggedIn) {
